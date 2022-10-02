@@ -22,10 +22,11 @@ public class SignupActivity extends AppCompatActivity {
     private Context mContext;
 
     String[] ids = new String[100];
-    int userCount;
 
     boolean canUseId = false;
     boolean isCheckIdDuplicated = false;
+
+    int userCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +64,21 @@ public class SignupActivity extends AppCompatActivity {
                 }
                 else {
                     if (isCheckIdDuplicated && canUseId) { // 중복 확인완료 및 ID 사용 가능
-                        Toast.makeText(getApplicationContext(), "Signup Complete", Toast.LENGTH_SHORT).show();
+                        userCount = preferences.getInt("USER_COUNT", 0);
+                        userCount++;
                         String id = editText_Id.getText().toString();
                         String pw = editText_Pw.getText().toString();
                         String name = editText_Name.getText().toString();
                         String call = editText_Call.getText().toString();
                         String address = editText_Add.getText().toString();
-                        editor.putString("ID", id);
-                        editor.putString("PW", pw);
-                        editor.putString("NAME", name);
-                        editor.putString("CALL", call);
-                        editor.putString("ADDRESS", address);
+                        editor.putString("ID_" + userCount, id);
+                        editor.putString("PW_" + userCount, pw);
+                        editor.putString("NAME_" + userCount, name);
+                        editor.putString("CALL_" + userCount, call);
+                        editor.putString("ADDRESS_" + userCount, address);
+                        editor.putInt("USER_COUNT", userCount);
                         editor.apply();
-                        userCount++;
-                        ids[userCount] = id;
+                        Toast.makeText(getApplicationContext(), "Signup Complete", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Toast.makeText(getApplicationContext(), "ID 중복확인을 하십시오", Toast.LENGTH_SHORT).show();
@@ -88,6 +90,9 @@ public class SignupActivity extends AppCompatActivity {
         btn_checkDuplicate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                CLEAR USER DATA
+//                editor.clear();
+//                editor.apply();
                 if (editText_Id.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "ID를 입력하시오", Toast.LENGTH_SHORT).show();
                 }
@@ -97,8 +102,10 @@ public class SignupActivity extends AppCompatActivity {
                     boolean isDuplicated = false;
                     userCount = preferences.getInt("USER_COUNT", 0);
                     for (int i = 0; i < userCount; i++) {
+                        ids[i] = preferences.getString("ID_" + (i+1), "");
                         if (ids[i].equals(tempId)) {
                             Toast.makeText(getApplicationContext(), "Duplicated ID", Toast.LENGTH_SHORT).show();
+                            canUseId = false;
                             isDuplicated = true;
                             break;
                         }
