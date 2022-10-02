@@ -4,12 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.content.SharedPreferences;
 
@@ -18,6 +21,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class SignupActivity extends AppCompatActivity {
     TextInputEditText editText_Id, editText_Pw, editText_PwCo, editText_Name, editText_Call, editText_Add;
     Button btn_Signup, btn_checkDuplicate;
+    RadioButton rbtn_refuse, rbtn_agree;
+    RadioGroup radioGroup;
 
     private Context mContext;
 
@@ -25,6 +30,7 @@ public class SignupActivity extends AppCompatActivity {
 
     boolean canUseId = false;
     boolean isCheckIdDuplicated = false;
+    boolean isAgreeTerms = false;
 
     int userCount = 0;
 
@@ -47,6 +53,10 @@ public class SignupActivity extends AppCompatActivity {
         btn_Signup = findViewById(R.id.btnSignup);
         btn_checkDuplicate = findViewById(R.id.btn_checkDuplicate);
 
+        rbtn_refuse = findViewById(R.id.rbtn_refuse);
+        rbtn_agree = findViewById(R.id.rbtn_agree);
+        radioGroup = findViewById(R.id.radioGroup);
+
         btn_Signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,23 +74,32 @@ public class SignupActivity extends AppCompatActivity {
                 }
                 else {
                     if (isCheckIdDuplicated && canUseId) { // 중복 확인완료 및 ID 사용 가능
-                        userCount = preferences.getInt("USER_COUNT", 0);
-                        userCount++;
-                        String id = editText_Id.getText().toString();
-                        String pw = editText_Pw.getText().toString();
-                        String name = editText_Name.getText().toString();
-                        String call = editText_Call.getText().toString();
-                        String address = editText_Add.getText().toString();
-                        editor.putString("ID_" + userCount, id);
-                        editor.putString("PW_" + userCount, pw);
-                        editor.putString("NAME_" + userCount, name);
-                        editor.putString("CALL_" + userCount, call);
-                        editor.putString("ADDRESS_" + userCount, address);
-                        editor.putInt("USER_COUNT", userCount);
-                        editor.apply();
-                        Toast.makeText(getApplicationContext(), "Signup Complete", Toast.LENGTH_SHORT).show();
+                        if (isAgreeTerms) { // 약관 동의 완료
+                            userCount = preferences.getInt("USER_COUNT", 0);
+                            userCount++;
+                            String id = editText_Id.getText().toString();
+                            String pw = editText_Pw.getText().toString();
+                            String name = editText_Name.getText().toString();
+                            String call = editText_Call.getText().toString();
+                            String address = editText_Add.getText().toString();
+                            editor.putString("ID_" + userCount, id);
+                            editor.putString("PW_" + userCount, pw);
+                            editor.putString("NAME_" + userCount, name);
+                            editor.putString("CALL_" + userCount, call);
+                            editor.putString("ADDRESS_" + userCount, address);
+                            editor.putInt("USER_COUNT", userCount);
+                            editor.apply();
+                            Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
+
+                            // 로그인 페이지로 이동
+                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            startActivity(intent);
+                        }
+                        else { // 약관 미동의
+                            Toast.makeText(getApplicationContext(), "약관에 동의하십시오", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                    else {
+                    else { // 중복 미확인 또는 아이디 사용 불가
                         Toast.makeText(getApplicationContext(), "ID 중복확인을 하십시오", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -133,6 +152,19 @@ public class SignupActivity extends AppCompatActivity {
             public void afterTextChanged(Editable editable) {
                 isCheckIdDuplicated = false;
                 canUseId = false;
+            }
+        });
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                switch (id) {
+                    case R.id.rbtn_agree:
+                        isAgreeTerms = true;
+                        break;
+                    default:
+                        isAgreeTerms = false;
+                }
             }
         });
     }

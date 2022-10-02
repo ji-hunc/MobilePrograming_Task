@@ -11,17 +11,18 @@
         android:textSize="40sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HI!"
+        android:text="Hello!"
         android:textColor="@color/black"/>
 
     <TextView
         android:layout_marginLeft="30dp"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Please Signup to continue"/>
 
     <LinearLayout
+        android:layout_marginTop="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -30,7 +31,6 @@
             app:startIconDrawable="@drawable/ic_baseline_person_24"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="30dp"
             android:hint="ID"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:id="@+id/textInputLayoutSignupID"
@@ -51,7 +51,6 @@
             android:layout_weight="1"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="30dp"
-            android:layout_marginTop="30dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="중복확인"/>
@@ -152,6 +151,44 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개인 정보 수집 약관에 동의합니다"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:gravity="right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:textSize="13sp"
+                android:text="거부"
+                android:id="@+id/rbtn_refuse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:textSize="13sp"
+                android:text="동의"
+                android:id="@+id/rbtn_agree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RadioGroup>
+
+    </LinearLayout>
 
     <Button
         android:layout_marginLeft="30dp"
