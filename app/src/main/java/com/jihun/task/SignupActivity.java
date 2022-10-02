@@ -70,7 +70,7 @@ public class SignupActivity extends AppCompatActivity {
                         || editText_Call.getText().toString().equals("")
                         || editText_Add.getText().toString().equals("");
                 if (isAllFilled) {
-                    Toast.makeText(getApplicationContext(), "Fill the text", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "모든 항목을 채워주십시오", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     if (isCheckIdDuplicated && canUseId) { // 중복 확인완료 및 ID 사용 가능
@@ -123,7 +123,7 @@ public class SignupActivity extends AppCompatActivity {
                     for (int i = 0; i < userCount; i++) {
                         ids[i] = preferences.getString("ID_" + (i+1), "");
                         if (ids[i].equals(tempId)) {
-                            Toast.makeText(getApplicationContext(), "Duplicated ID", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "이미 사용되고 있는 ID입니다", Toast.LENGTH_SHORT).show();
                             canUseId = false;
                             isDuplicated = true;
                             break;

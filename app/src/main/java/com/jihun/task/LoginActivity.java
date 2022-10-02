@@ -62,29 +62,39 @@ public class LoginActivity extends AppCompatActivity {
                 boolean isFindMatchingID = false;
                 String inputId = editTextInput_ID.getText().toString();
                 String inputPw = editTextInput_PW.getText().toString();
-                int presentUser = 0;
-                int userCount = preferences.getInt("USER_COUNT", 0);
-                for (int i=0; i<userCount; i++) {
-                    String userId = preferences.getString("ID_" + (i+1), "");
-                    if (userId.equals(inputId)) {
-                        presentUser = i+1;
-                        isFindMatchingID = true;
+                if (inputId.equals("") || inputPw.equals("")) {
+                    if (inputId.equals("")) {
+                        Toast.makeText(getApplicationContext(), "ID를 입력해주세요", Toast.LENGTH_SHORT).show();
                     }
-                }
-                if (isFindMatchingID) {
-                    String userPw = preferences.getString("PW_" + presentUser, "");
-                    if (userPw.equals(inputPw)) {
-                        // present user data 보내기 정수 1자리.
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(intent);
-                        Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), "비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
+                    if (inputPw.equals("")) {
+                        Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "등록된 ID가 아닙니다", Toast.LENGTH_SHORT).show();
+                    int presentUser = 0;
+                    int userCount = preferences.getInt("USER_COUNT", 0);
+                    for (int i=0; i<userCount; i++) {
+                        String userId = preferences.getString("ID_" + (i+1), "");
+                        if (userId.equals(inputId)) {
+                            presentUser = i+1;
+                            isFindMatchingID = true;
+                        }
+                    }
+                    if (isFindMatchingID) {
+                        String userPw = preferences.getString("PW_" + presentUser, "");
+                        if (userPw.equals(inputPw)) {
+                            // present user data 보내기 정수 1자리.
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(), "비밀번호가 틀렸습니다", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "등록된 ID가 아닙니다", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
