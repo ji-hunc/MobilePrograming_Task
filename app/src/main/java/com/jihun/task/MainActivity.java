@@ -2,8 +2,10 @@ package com.jihun.task;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,5 +35,20 @@ public class MainActivity extends AppCompatActivity {
 
         ProductAdapter productAdapter = new ProductAdapter(this, R.layout.list_row, arrayList);
         listView.setAdapter(productAdapter);
+
+
+        Intent intent = getIntent();
+        int user_code = intent.getIntExtra("USER_CODE", 0);
+
+        button_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialog(user_code);
+            }
+        });
+    }
+    public void openDialog(int user_code) {
+        MyDialog myDialog = new MyDialog(user_code);
+        myDialog.show(getSupportFragmentManager(), "qwe");
     }
 }

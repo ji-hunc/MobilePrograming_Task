@@ -60,7 +60,6 @@
     <com.google.android.material.textfield.TextInputLayout
         app:endIconMode="password_toggle"
         app:helperTextTextColor="@color/pantone2019"
-        app:boxStrokeColor = "@android:color/holo_green_dark"
         app:startIconDrawable="@drawable/ic_baseline_lock_24"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"

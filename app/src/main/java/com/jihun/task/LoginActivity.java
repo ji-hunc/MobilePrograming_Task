@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("USER_CODE", 0);
                 startActivity(intent);
             }
         });
@@ -69,8 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (inputPw.equals("")) {
                         Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
+                } else {
                     int presentUser = 0;
                     int userCount = preferences.getInt("USER_COUNT", 0);
                     for (int i=0; i<userCount; i++) {
@@ -83,8 +83,9 @@ public class LoginActivity extends AppCompatActivity {
                     if (isFindMatchingID) {
                         String userPw = preferences.getString("PW_" + presentUser, "");
                         if (userPw.equals(inputPw)) {
-                            // present user data 보내기 정수 1자리.
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            // present user data 보내기 정수 1자리.
+                            intent.putExtra("USER_CODE", presentUser);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                         }
