@@ -4,9 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.308" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.38853759765625" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.28229166666666666" />
-        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.30603179931640634" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.29401397705078125" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.30331268310546877" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.3070892333984375" />
         <entry key="app/src/main/res/layout/list_row.xml" value="0.375" />
       </map>
     </option>
