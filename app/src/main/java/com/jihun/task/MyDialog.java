@@ -13,23 +13,26 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import java.util.HashMap;
+
 public class MyDialog extends AppCompatDialogFragment {
-    public MyDialog(int user_code) {
-        this.user_code = user_code;
+    public MyDialog(String user_id) {
+        this.user_id = user_id;
     }
 
-    int user_code;
+    String user_id;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        if (user_code != 0) {
-            SharedPreferences preferences = getActivity().getSharedPreferences("sharedPreference", Activity.MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferences.edit();
-            String id = preferences.getString("ID_" + user_code, "");
-            String name = preferences.getString("NAME_" + user_code, "");
-            String call = preferences.getString("CALL_" + user_code, "");
-            String address = preferences.getString("ADDRESS_" + user_code, "");
+        if (!(user_id.equals("guest"))) {
+            Intent intent = getActivity().getIntent();
+            Member user_info = (Member) intent.getSerializableExtra("USER_INFO");
+
+            String id = user_info.getId();
+            String name = user_info.getName();
+            String call = user_info.getCall();
+            String address = user_info.getAddress();
             String info = "ID: " + id + "\nname: " + name + "\ncall: " + call + "\naddress: " + address;
 
             builder.setTitle("회원정보").setMessage(info).setPositiveButton("확인", new DialogInterface.OnClickListener() {
