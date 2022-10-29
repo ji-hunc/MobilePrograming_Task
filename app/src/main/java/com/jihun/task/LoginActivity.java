@@ -3,15 +3,24 @@ package com.jihun.task;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     Button buttonSignup, buttonLogin, buttonGuest;
@@ -32,8 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("sharedPreference", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
-        String autoId = preferences.getString("ID_1", "");
-        String autoPw = preferences.getString("PW_1", "");
+        HashMap<String, String> memberHashMap = LoadUrlMap(getApplicationContext());
+
+        String autoId = (String) memberHashMap.keySet().toArray()[0];
+        Gson gson = new Gson();
+        Member firstMember = gson.fromJson(memberHashMap.get(autoId), Member.class);
+        String autoPw = firstMember.getPassword();
+
         if (!autoId.equals("") && !autoPw.equals("")) {
             editTextInput_ID.setText(autoId);
             editTextInput_PW.setText(autoPw);
@@ -51,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("USER_CODE", 0);
+                intent.putExtra("USER_ID", "guest");
                 startActivity(intent);
             }
         });
@@ -59,7 +73,6 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // present user data ex) 3 -> ID_3, PW_3 ...
                 boolean isFindMatchingID = false;
                 String inputId = editTextInput_ID.getText().toString();
                 String inputPw = editTextInput_PW.getText().toString();
@@ -72,20 +85,21 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } else {
                     int presentUser = 0;
-                    int userCount = preferences.getInt("USER_COUNT", 0);
-                    for (int i=0; i<userCount; i++) {
-                        String userId = preferences.getString("ID_" + (i+1), "");
-                        if (userId.equals(inputId)) {
-                            presentUser = i+1;
+                    for (Map.Entry<String, String> members : memberHashMap.entrySet()) {
+                        String alreadyId = members.getKey();
+                        if (alreadyId.equals(inputId)) {
                             isFindMatchingID = true;
+                            break;
                         }
                     }
                     if (isFindMatchingID) {
-                        String userPw = preferences.getString("PW_" + presentUser, "");
+                        Gson gson = new Gson();
+                        Member userInfo = gson.fromJson(memberHashMap.get(inputId), Member.class);
+                        String userPw = userInfo.getPassword();
                         if (userPw.equals(inputPw)) {
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            // present user data 보내기 정수 1자리.
-                            intent.putExtra("USER_CODE", presentUser);
+                            intent.putExtra("USER_ID", inputId);
+                            intent.putExtra("USER_INFO", userInfo);
                             startActivity(intent);
                             Toast.makeText(getApplicationContext(), "로그인 성공", Toast.LENGTH_SHORT).show();
                         }
@@ -99,5 +113,26 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public HashMap<String, String> LoadUrlMap(Context context) {
+        HashMap<String, String> outputMap = new HashMap<String, String>();
+        SharedPreferences mmPref = context.getSharedPreferences("sharedPreference", Context.MODE_PRIVATE);
+        try {
+            if (mmPref != null) {
+                String jsonString = mmPref.getString("userData", (new JSONObject()).toString());
+                JSONObject jsonObject = new JSONObject(jsonString);
+
+                Iterator<String> keysItr = jsonObject.keys();
+                while (keysItr.hasNext()) {
+                    String key = keysItr.next();
+                    String value = (String) jsonObject.get(key);
+                    outputMap.put(key, value);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return outputMap;
     }
 }

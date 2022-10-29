@@ -38,17 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        int user_code = intent.getIntExtra("USER_CODE", 0);
+        String user_id = intent.getStringExtra("USER_ID");
 
         button_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openDialog(user_code);
+                openDialog(user_id);
             }
         });
     }
-    public void openDialog(int user_code) {
-        MyDialog myDialog = new MyDialog(user_code);
+    public void openDialog(String user_id) {
+        MyDialog myDialog = new MyDialog(user_id);
         myDialog.show(getSupportFragmentManager(), "qwe");
     }
 }

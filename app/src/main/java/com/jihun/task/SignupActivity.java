@@ -18,6 +18,13 @@ import android.content.SharedPreferences;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity {
     TextInputLayout textInputLayout_Pw;
@@ -46,6 +53,9 @@ public class SignupActivity extends AppCompatActivity {
 
         SharedPreferences preferences = getSharedPreferences("sharedPreference", Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+
+        HashMap<String, String> memberHashMap = LoadUrlMap(getApplicationContext());
+
 
         editText_Id = findViewById(R.id.textInputEditTextSignupID);
         editText_Pw = findViewById(R.id.textInputEditTextSignupPassword);
@@ -105,22 +115,18 @@ public class SignupActivity extends AppCompatActivity {
                 } else {
                     if (isCheckIdDuplicated && canUseId) { // 중복 확인완료 및 ID 사용 가능
                         if (canUsePw) {
-                            if (isAgreeTerms) { // 약관 동의 완료
-                                userCount = preferences.getInt("USER_COUNT", 0);
-                                userCount++;
+                            if (isAgreeTerms) { // 약관 동의 완료 및 회원가입 진행 가능
                                 String id = editText_Id.getText().toString();
                                 String pw = editText_Pw.getText().toString();
                                 String name = editText_Name.getText().toString();
                                 String call = editText_Call.getText().toString();
                                 String address = editText_Add.getText().toString();
-                                editor.putString("ID_" + userCount, id);
-                                editor.putString("PW_" + userCount, pw);
-                                editor.putString("NAME_" + userCount, name);
-                                editor.putString("CALL_" + userCount, call);
-                                editor.putString("ADDRESS_" + userCount, address);
-                                editor.putInt("USER_COUNT", userCount);
-                                editor.apply();
                                 Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
+                                Gson gson = new Gson();
+                                Member member = new Member(id, pw, name, call, address);
+                                String memberToJson = gson.toJson(member);
+                                memberHashMap.put(id, memberToJson);
+                                saveUrlMap(mContext, memberHashMap);
 
                                 finish();
                                 // 로그인 페이지로 이동
@@ -152,10 +158,9 @@ public class SignupActivity extends AppCompatActivity {
                     isCheckIdDuplicated = true;
                     String tempId = editText_Id.getText().toString();
                     boolean isDuplicated = false;
-                    userCount = preferences.getInt("USER_COUNT", 0);
-                    for (int i = 0; i < userCount; i++) {
-                        ids[i] = preferences.getString("ID_" + (i+1), "");
-                        if (ids[i].equals(tempId)) {
+                    for (Map.Entry<String, String> members : memberHashMap.entrySet()) {
+                        String alreadyId = members.getKey();
+                        if (alreadyId.equals(tempId)) {
                             Toast.makeText(getApplicationContext(), "이미 사용되고 있는 ID입니다", Toast.LENGTH_SHORT).show();
                             canUseId = false;
                             isDuplicated = true;
@@ -200,5 +205,40 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void saveUrlMap(Context context, HashMap<String, String> hashMapData) {
+        SharedPreferences mmPref = context.getSharedPreferences("sharedPreference", Context.MODE_PRIVATE);
+        if (mmPref != null) {
+            JSONObject jsonObject = new JSONObject(hashMapData);
+            String jsonString = jsonObject.toString();
+            SharedPreferences.Editor editor = mmPref.edit();
+            editor.remove("userData").apply();
+            editor.putString("userData", jsonString);
+            editor.apply();
+        } else {
+            Log.e("nullPre", "qwe");
+        }
+    }
+
+    public HashMap<String, String> LoadUrlMap(Context context) {
+        HashMap<String, String> outputMap = new HashMap<String, String>();
+        SharedPreferences mmPref = context.getSharedPreferences("sharedPreference", Context.MODE_PRIVATE);
+        try {
+            if (mmPref != null) {
+                String jsonString = mmPref.getString("userData", (new JSONObject()).toString());
+                JSONObject jsonObject = new JSONObject(jsonString);
+
+                Iterator<String> keysItr = jsonObject.keys();
+                while (keysItr.hasNext()) {
+                    String key = keysItr.next();
+                    String value = (String) jsonObject.get(key);
+                    outputMap.put(key, value);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return outputMap;
     }
 }
