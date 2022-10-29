@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,21 +37,25 @@ public class LoginActivity extends AppCompatActivity {
         editTextInput_ID = findViewById(R.id.editTextInput_ID);
         editTextInput_PW = findViewById(R.id.editTextInput_PW);
 
-        SharedPreferences preferences = getSharedPreferences("sharedPreference", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-
+        // User 데이터가 들어있는 HashMap 불러오기
         HashMap<String, String> memberHashMap = LoadUrlMap(getApplicationContext());
 
-        String autoId = (String) memberHashMap.keySet().toArray()[0];
-        Gson gson = new Gson();
-        Member firstMember = gson.fromJson(memberHashMap.get(autoId), Member.class);
-        String autoPw = firstMember.getPassword();
-
-        if (!autoId.equals("") && !autoPw.equals("")) {
-            editTextInput_ID.setText(autoId);
-            editTextInput_PW.setText(autoPw);
+        // 자동로그인을 위한 Id, Pw 초기화
+        String autoId, autoPw;
+        try {
+            autoId = (String) memberHashMap.keySet().toArray()[0];
+            Gson gson = new Gson();
+            Member firstMember = gson.fromJson(memberHashMap.get(autoId), Member.class);
+            autoPw = firstMember.getPassword();
+        } catch (ArrayIndexOutOfBoundsException e) { // 앱 최초 실행 혹은 계정을 하나도 만들지 않았을 때를 위한 예외
+            autoId = "";
+            autoPw = "";
         }
+        editTextInput_ID.setText(autoId);
+        editTextInput_PW.setText(autoPw);
 
+
+        // Sign up 버튼을 클릭했을 때 회원가입 액티비티로 이동
         buttonSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Guest 버튼을 클릭했을 때 게스트모드로 메인액티비티 이동
         buttonGuest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Login 버튼을 클릭했을 때
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,8 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (inputPw.equals("")) {
                         Toast.makeText(getApplicationContext(), "비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    int presentUser = 0;
+                } else { // ID, PW 둘다 입력이 되었을 때
+                    // 기존 회원정보에 입력한 아이디가 있는지 확인
                     for (Map.Entry<String, String> members : memberHashMap.entrySet()) {
                         String alreadyId = members.getKey();
                         if (alreadyId.equals(inputId)) {
@@ -92,11 +97,11 @@ public class LoginActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    if (isFindMatchingID) {
+                    if (isFindMatchingID) { // 기존 회원정보와 일치하는 아이디가 있을 때
                         Gson gson = new Gson();
                         Member userInfo = gson.fromJson(memberHashMap.get(inputId), Member.class);
                         String userPw = userInfo.getPassword();
-                        if (userPw.equals(inputPw)) {
+                        if (userPw.equals(inputPw)) { // 아이디에 해당하는 입력한 비밀번호가 일치하는지 확인
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("USER_ID", inputId);
                             intent.putExtra("USER_INFO", userInfo);
@@ -115,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    // Preference에 저장되어 있는 Json형태의 HashMap을 원래대로 복구
     public HashMap<String, String> LoadUrlMap(Context context) {
         HashMap<String, String> outputMap = new HashMap<String, String>();
         SharedPreferences mmPref = context.getSharedPreferences("sharedPreference", Context.MODE_PRIVATE);

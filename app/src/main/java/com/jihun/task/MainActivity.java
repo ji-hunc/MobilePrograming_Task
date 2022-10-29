@@ -3,12 +3,10 @@ package com.jihun.task;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -40,15 +38,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String user_id = intent.getStringExtra("USER_ID");
 
+        // 회원정보 버튼을 클릭했을 때 다이얼로그 띄우기
         button_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openDialog(user_id);
+                // id를 dialog 객체로 넘겨주고 화면에 띄우기
+                MyDialog myDialog = new MyDialog(user_id);
+                myDialog.show(getSupportFragmentManager(), "qwe");
             }
         });
-    }
-    public void openDialog(String user_id) {
-        MyDialog myDialog = new MyDialog(user_id);
-        myDialog.show(getSupportFragmentManager(), "qwe");
     }
 }

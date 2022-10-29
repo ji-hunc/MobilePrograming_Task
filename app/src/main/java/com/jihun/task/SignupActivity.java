@@ -35,15 +35,11 @@ public class SignupActivity extends AppCompatActivity {
 
     private Context mContext;
 
-    String[] ids = new String[100];
-
     boolean canUseId = false;
     boolean canUsePw = false;
     boolean isCheckIdDuplicated = false;
     boolean isLongerThan10 = false;
     boolean isAgreeTerms = false;
-
-    int userCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +47,8 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         mContext = this;
 
-        SharedPreferences preferences = getSharedPreferences("sharedPreference", Activity.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-
+        // User 데이터가 들어있는 HashMap 불러오기
         HashMap<String, String> memberHashMap = LoadUrlMap(getApplicationContext());
-
 
         editText_Id = findViewById(R.id.textInputEditTextSignupID);
         editText_Pw = findViewById(R.id.textInputEditTextSignupPassword);
@@ -86,10 +79,10 @@ public class SignupActivity extends AppCompatActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
+            public void afterTextChanged(Editable editable) { // 비밀번호가 입력하며 변경될 때 마다 조건에 맞는지 체크
                 String input_pw = editText_Pw.getText().toString();
                 isLongerThan10 = input_pw.length() >= 10;
-                if(!(input_pw.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) && isLongerThan10){
+                if(!(input_pw.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*")) && isLongerThan10){ // 특수문자가 포함되고 길이가 10이상인지 체크
                     textInputLayout_Pw.setHelperText("");
                     textInputLayout_Pw.setBoxStrokeColor(getResources().getColor(R.color.purple_500));
                     canUsePw = true;
@@ -112,30 +105,34 @@ public class SignupActivity extends AppCompatActivity {
                         || editText_Add.getText().toString().equals("");
                 if (isAllFilled) {
                     Toast.makeText(getApplicationContext(), "모든 항목을 채워주십시오", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (isCheckIdDuplicated && canUseId) { // 중복 확인완료 및 ID 사용 가능
+                } else { // 모든 항목이 채워졌을 때
+                    if (isCheckIdDuplicated && canUseId) { // ID 중복체크를 했고, ID 가 사용이 가능할 때
                         if (canUsePw) {
-                            if (isAgreeTerms) { // 약관 동의 완료 및 회원가입 진행 가능
+                            if (isAgreeTerms) { // 약관 동의 완료를 했을 때
+                                // 회원가입 가능
                                 String id = editText_Id.getText().toString();
                                 String pw = editText_Pw.getText().toString();
                                 String name = editText_Name.getText().toString();
                                 String call = editText_Call.getText().toString();
                                 String address = editText_Add.getText().toString();
                                 Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다", Toast.LENGTH_SHORT).show();
+
                                 Gson gson = new Gson();
                                 Member member = new Member(id, pw, name, call, address);
                                 String memberToJson = gson.toJson(member);
+                                // Member 객체를 Json String 형태로 변경하여 hashMap 에 추가
                                 memberHashMap.put(id, memberToJson);
+                                // preference 에 hashMap 저장
                                 saveUrlMap(mContext, memberHashMap);
 
                                 finish();
                                 // 로그인 페이지로 이동
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 startActivity(intent);
-                            } else { // 약관 미동의
+                            } else { // 약관에 미동의 했을 때
                                 Toast.makeText(getApplicationContext(), "약관에 동의하십시오", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
+                        } else { // 비밀번호 조건이 맞지 않을 때
                             Toast.makeText(mContext, "비밀번호를 확인하십시오", Toast.LENGTH_SHORT).show();
                         }
 
@@ -188,6 +185,7 @@ public class SignupActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                // 중복체크 완료후 아이디를 수정할 경우 다시 중복체크를 해야하므로 false 지정
                 isCheckIdDuplicated = false;
                 canUseId = false;
             }

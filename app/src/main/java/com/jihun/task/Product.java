@@ -1,5 +1,6 @@
 package com.jihun.task;
 
+// 리스트뷰에 출력되는 각각 상품들의 클래스
 public class Product {
     int image;
     String name;

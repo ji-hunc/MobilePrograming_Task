@@ -18,11 +18,11 @@
         android:id="@+id/loginText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login to your Account"
-        android:textSize="15sp"
-        android:layout_marginTop="120dp"
+        android:layout_below="@+id/welcomeText"
         android:layout_marginLeft="30dp"
-        android:layout_below="@+id/welcomeText"/>
+        android:layout_marginTop="80dp"
+        android:text="Login to your Account"
+        android:textSize="15sp" />
 
     <com.google.android.material.textfield.TextInputLayout
         app:startIconDrawable="@drawable/ic_baseline_person_24"
@@ -44,6 +44,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        app:endIconMode="clear_text"
         app:startIconDrawable="@drawable/ic_baseline_lock_24"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"

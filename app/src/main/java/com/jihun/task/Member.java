@@ -2,6 +2,7 @@ package com.jihun.task;
 
 import java.io.Serializable;
 
+// 유저정보를 가지고 있는 Member 클래스. 유저 1명당 1개의 Member 객체 생성
 public class Member implements Serializable {
     private String id;
     private String password;

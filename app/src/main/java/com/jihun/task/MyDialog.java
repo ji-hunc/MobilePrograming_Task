@@ -1,26 +1,22 @@
 package com.jihun.task;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import java.util.HashMap;
-
 public class MyDialog extends AppCompatDialogFragment {
+    String user_id;
+
     public MyDialog(String user_id) {
         this.user_id = user_id;
     }
 
-    String user_id;
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -33,7 +29,10 @@ public class MyDialog extends AppCompatDialogFragment {
             String name = user_info.getName();
             String call = user_info.getCall();
             String address = user_info.getAddress();
-            String info = "ID: " + id + "\nname: " + name + "\ncall: " + call + "\naddress: " + address;
+            String info = "아이디: " + id +
+                          "\n이 름: " + name +
+                          "\n전화번호: " + call +
+                          "\n주 소: " + address;
 
             builder.setTitle("회원정보").setMessage(info).setPositiveButton("확인", new DialogInterface.OnClickListener() {
                 @Override
